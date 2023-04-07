@@ -1,0 +1,430 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>
+        小区列表
+    </title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+<!--    <link rel="stylesheet" href="css/main.css" media="all">-->
+    <script type="text/javascript" src="lib/loading/okLoading.js"></script>
+<!--    <link rel="stylesheet" href="css/bootstrap.css">-->
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="lib1/layui/css/layui.css">
+</head>
+<body>
+<div class="x-nav">
+            <span class="layui-breadcrumb">
+              <a><cite>首页</cite></a>
+              <a><cite>小区管理</cite></a>
+              <a><cite>小区列表</cite></a>
+            </span>
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"  href="javascript:location.replace(location.href);" title="刷新"><i class="layui-icon" style="line-height:30px">ဂ</i></a>
+</div>
+<div class="x-body">
+    <form class="layui-form x-center" action="" style="width:80%">
+        <div class="layui-form-pane" style="margin-top: 15px;">
+            <div class="layui-form-item">
+                <label class="layui-form-label">日期范围</label>
+                <div class="layui-input-inline">
+                    <input class="layui-input" placeholder="开始日" name="dateEntryStart" id="dateEntryStart">
+                </div>
+                <div class="layui-input-inline">
+                    <input class="layui-input" placeholder="截止日" name="dateEntryEnd" id="dateEntryEnd">
+                </div>
+                <div class="layui-input-inline">
+                    <input type="text" name="username"  placeholder="请输入登录名"  autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-input-inline" style="width:80px">
+                    <button class="layui-btn"  lay-submit="" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+
+    <table id="comm" lay-filter="commFilter" class="layui-table"></table>
+
+</div>
+<script src="lib/layui/layui.js" charset="utf-8"></script>
+<script src="js/x-layui.js" charset="utf-8"></script>
+<script src="lib1/layui/layui.js" charset="UTF-8"></script>
+<script>
+    layui.use(['laydate','laydate','table','layer','upload','form'], function() {
+        var ok = layui.jquery;  //jquery
+        var laydate = layui.laydate;//日期插件
+        var table = layui.table;
+        var form = layui.form;
+        var layer = layui.layer;
+        var upload = layui.upload;
+        okLoading.close(ok);
+        //以上模块根据需要引入
+
+
+        // 上传功能
+        var uploadInst = upload.render({
+            elem: '#uploadBtn'
+            ,url: 'comm/upload' //改成您自己的上传接口
+            ,accept:'file'
+            ,acceptMime: 'image/*'
+            ,size:0
+            ,multiple:true
+            ,number:5
+            ,drag:true
+            ,exts: 'jpg|png|gif' //允许上传的文件格式
+            ,choose:function (obj){
+                // var files = obj.pushFile();   // 将每次选择的文件追加到文件队列
+            }
+            ,done:function (res){
+                src =  res.data;
+                layui.$('#uploadView').removeClass('layui-hide').find('img').attr('src', "images/"+res.data);
+                var imageUrl = document.getElementById("imgname").src;
+                document.getElementById("imgname_input").value = imageUrl;
+
+
+            }
+            ,before: function(){
+                layer.msg('上传中', {icon: 16, time: 20});
+            }
+        });
+
+
+        //时间范围限制
+        var dateEntryStart= laydate.render({
+            elem: '#dateEntryStart',
+            theme: '#0079c4',
+            trigger: 'click',
+            btns: ['clear', 'confirm'],
+            // showBottom: false,
+            done: function (value, date) {
+                dateEntryEnd.config.min = {
+                    year: date.year,
+                    month: date.month - 1,
+                    date: date.date,
+                    // hours: date.hours,
+                    // minutes: date.minutes,
+                    // seconds: date.seconds
+                };
+                // 作为 结束选择 的 开始时间
+                dateEntryEnd.config.value = value;
+            }
+        });
+        var dateEntryEnd = laydate.render({
+            elem: '#dateEntryEnd',
+            theme: '#0079c4',
+            trigger: 'click',//  触发方式
+            btns: ['clear', 'confirm'],// 底部按钮
+            // showBottom: false,
+            done: function (value, date) {// 选择完成回调
+                dateEntryStart.config.max = {
+                    year: date.year,
+                    month: date.month - 1,
+                    date: date.date,
+                    // hours: date.hours,
+                    // minutes: date.minutes,
+                    // seconds: date.seconds
+                };
+                dateEntryStart.config.value = value;
+            }
+        });
+
+        // 日期格式化
+        laydate.render({
+            elem:"#createTime",
+            format:"yyyy-MM-dd"
+        });
+
+    var render = table.render({
+        elem: "#comm"
+        , url: "comm"
+        , page: true
+        , toolbar: '#addbar'
+        , parseData: function (res) {
+            return {
+                "code": res.code
+                , "msg": res.msg
+                , "count": res.count
+                , "data": res.data
+            }
+        }, cols: [[
+            {type: 'checkbox', fixed: 'left'}
+            ,{field: 'id', title: 'ID', width: 60, sort: true}
+            , {field: 'commName', title: '小区编号', width: 80}
+            ,{field: 'commName', title: '小区名称', width:90}
+            ,{field: 'commAddres', title: '坐落地址', width:80}
+            ,{field: 'commSize', title: '占地面积(m2)', width: 80}
+            ,{field: 'totalNumHouse', title: '总户数', width: 80}
+            ,{field: 'totalNumberBuild', title: '总栋数', width: 80}
+            ,{field: 'greeGate', title: '绿化率(%)', width: 80}
+            ,{field: 'img', title: '缩率图', templet:'#img', width: 70}
+            ,{field: 'developersName', title: '开发商名称', width: 90}
+            ,{field: 'proManagerName', title: '物业公司名称', width: 90}
+            ,{field: 'createTime', title: '创建时间', width: 110}
+            ,{field: 'developersName', title: '开发商名称', width: 80}
+            // ,{field: 'type', title: '状态', width: 70}
+            ,{field: 'right',title: '操作',width: 160,toolbar:"#oper",align:"center"}
+        ]]
+    });
+
+    //行工具栏
+    table.on('tool(commFilter)',function (obj){
+        var data = obj.data;   // 获得当前行数据
+        var layEvent = obj.event;   // 或得当前lay-event 对应的值
+        var tr = obj.tr;      // 获得当前行tr的DOM对象
+        if(layEvent === 'del'){   // 删除
+            layer.confirm("真的删除嘛?",function (index){
+            //    向服务端发送请求
+                $.ajax({
+                    url:"comm/"+data.id,
+                    type:"delete",
+                    success:function (res){
+                        if(res.code == 0){
+                            obj.del();  // 删除行
+                            table.reload("comm");
+                        }else{
+                            layer.alert("删除失败")
+                        }
+                    }
+                })
+                layer.close(index);
+            });
+        }
+        else if(layEvent === 'edit'){
+            console.log(data);
+            form.val('editUser',data);
+            layui.$('#uploadView').removeClass('layui-hide').find('img').attr('src', data.img);
+
+            layer.closeAll();
+            form.render();
+            table.reload("comm");
+            layer.open({
+                type:1,
+                title:["修改用户","padding-left:5px"],
+                content:layui.$("#cm"),  //dom格式
+                area:['590px','450px'],
+                offset: ['100px', '200px'],
+                anim:4,
+               shade:false
+            })
+        }
+    })
+
+
+
+    //   添加工具栏
+    table.on('toolbar(commFilter)',function (obj){
+        console.log(obj)
+        var ename = obj.event;
+        if(ename === 'add'){
+          $("#addOrEditForm")[0].reset();
+            layui.$('#uploadView').removeClass('layui-hide').find('img').attr('src', "images/15c83a9c3-9238-40b6-bd1e-d32a8914ccf0.png");
+
+            layui.form.render();
+            layer.open({
+                type:1,
+                title:['添加用户','padding-left:5px'],
+                content:layui.$("#cm"),
+                area:['590px','450px'],
+                offset: ['100px', '200px'],
+                anim:4,
+                shade:false
+            })
+        }else{
+            var checkStatus = table.checkStatus('comm');
+            var data1 = checkStatus.data;
+            var ids = ""
+            if(data1.length > 0){
+                for(var i in data1){
+                    ids += data1[i].id + ',';
+                }
+                layer.confirm('确定删除用户吗？',{icon:3,title:"提示信息"},function (index){
+                    $.ajax({
+                        type:"post",
+                        url:"comm/deleAll",
+                        data:{ids:ids},
+                        success:function (res) {
+                            layer.closeAll();
+                            table.reload("comm");
+                        }
+                    })
+                })
+            }else{
+                layer.msg("请选择需要删除的用户")
+            }
+        }
+    })
+
+
+     form.on('submit(addOrEdit)',function (data){
+        var id = data.field.id;
+         if(id == ""){
+            $.ajax({
+                type:"post",
+                url:"comm",
+                data:JSON.stringify(data.field),
+                contentType:"application/json",
+                success:function (res){
+                    layer.closeAll();
+                    table.reload("comm");
+                }
+
+            })
+        }else{
+            $.ajax({
+                type:"put",
+                url:"comm",
+                data:JSON.stringify(data.field),
+                contentType:"application/json",
+                success:function (res){
+                    layer.closeAll();
+                    table.reload("comm");
+                }
+            })
+        }
+
+     })
+    })
+
+
+</script>
+
+
+
+<div class="x-body" id="cm" style="display: none;width: 490px;margin-top: 50px">
+    <form class="layui-form layui-form-pane"  action="#" onsubmit="return false"  lay-filter="editUser" id="addOrEditForm">
+        <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+            <div class="layui-tab-content" >
+                <div class="layui-tab-item layui-show">
+                    <input type="hidden" name="id" id="id" value="">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">
+                            <span class='x-red'>*</span>小区名称
+                        </label>
+                        <div class="layui-input-block">
+                            <input type="text" name="commName" id="commName" autocomplete="off" placeholder="小区名称"
+                                   class="layui-input" required="" lay-verify="required" value="">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">
+                            <span class='x-red'>*</span>坐落地址
+                        </label>
+                        <div class="layui-input-block">
+                            <input type="text" name="commAddres" id="commAddres" autocomplete="off" placeholder="坐落地址"
+                                   class="layui-input" lay-verify="required" value="">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">
+                            <span class='x-red'>*</span>占地面积
+                        </label>
+                        <div class="layui-input-block">
+                            <input type="text" name="commSize" id="commSize" autocomplete="off" placeholder="占地面积"
+                                   class="layui-input" lay-verify="required" value="">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">
+                            <span class='x-red'>*</span>开发商名称
+                        </label>
+                        <div class="layui-input-block">
+                            <input type="text" name="developersName" id="developersName" autocomplete="off" placeholder="开发商名称"
+                                   class="layui-input" lay-verify="required" value="">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">
+                            <span class='x-red'>*</span>物业公司名称
+                        </label>
+                        <div class="layui-input-block">
+                            <input type="text" name="proManagerName" id="proManagerName" autocomplete="off" placeholder="物业公司名称"
+                                   class="layui-input" lay-verify="required" value="">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">
+                            <span class='x-red'>*</span>绿化率
+                        </label>
+                        <div class="layui-input-block">
+                            <input type="text" name="greeGate" id="greeGate" autocomplete="off" placeholder="绿化率"
+                                   class="layui-input" lay-verify="required" value="">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">
+                            <span class='x-red'>*</span>总栋数
+                        </label>
+                        <div class="layui-input-block">
+                            <input type="text" name="totalNumberBuild" id="totalNumberBuild" autocomplete="off" placeholder="总栋数"
+                                   class="layui-input" lay-verify="required" value="">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">
+                            <span class='x-red'>*</span>总户数
+                        </label>
+                        <div class="layui-input-block">
+                            <input type="text" name="totalNumHouse" id="totalNumHouse" autocomplete="off" placeholder="总户数"
+                                   class="layui-input" lay-verify="required" value="">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">上传</label>
+                        <div class="layui-upload-drag" id="uploadBtn">
+                            <i class="layui-icon"></i>
+                            <p>点击上传，或将文件拖拽到此处</p>
+                            <div class="layui-hide" id="uploadView">
+                                <hr>
+                                <img id="imgname" src="" alt="图片未加载" style="width: 80px;height: 80px">
+                                <input type="hidden" name="img" id="imgname_input"/>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn"  lay-filter="addOrEdit" lay-submit>保存</button>
+
+            </div>
+        </div>
+    </form>
+</div>
+
+
+
+<script type="text/html" id="addbar">
+    <div class="layui-btn-container">
+        <a class="layui-btn layui-icon layui-icon-add-1" lay-event="add"></a>
+        <a class="layui-btn layui-icon layui-icon-subtraction" lay-event="dels"></a>
+    </div>
+</script>
+
+
+<!--图片显示-->
+<script type="text/html" id="img">
+
+    <div>
+        <img src="{{d.img}}" style="width: 28px;height: 28px">
+    </div>
+</script>
+
+<!--行 操作-->
+<script type="text/html" id="oper">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+</body>
+</html>

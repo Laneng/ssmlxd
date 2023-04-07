@@ -1,0 +1,186 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>
+        小区管理
+    </title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+
+    <script type="text/javascript" src="lib/loading/okLoading.js"></script>
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="lib1/layui/css/layui.css">
+
+
+</head>
+
+<body>
+<div class="x-nav">
+            <span class="layui-breadcrumb">
+              <a><cite>首页</cite></a>
+              <a><cite>小区管理</cite></a>
+              <a><cite id="editComm">添加小区</cite></a>
+            </span>
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"  href="javascript:location.replace(location.href);" title="刷新"><i class="layui-icon" style="line-height:30px">ဂ</i></a>
+</div>
+<div class="x-body" >
+    <form class="layui-form layui-form-pane" action="" lay-filter="editUser" id="add">
+        <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+            <div class="layui-tab-content" >
+                <div class="layui-tab-item layui-show">
+                    <input type="hidden" name="id" id="id" value="">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">
+                            <span class='x-red'>*</span>小区名称
+                        </label>
+                        <div class="layui-input-block">
+                            <input type="text" name="commName" id="commName" autocomplete="off" placeholder="小区名称"
+                                   class="layui-input" required="" lay-verify="required" value="">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">
+                            <span class='x-red'>*</span>坐落地址
+                        </label>
+                        <div class="layui-input-block">
+                            <input type="text" name="commAddres" id="commAddres" autocomplete="off" placeholder="坐落地址"
+                                   class="layui-input" lay-verify="required" value="">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">
+                            <span class='x-red'>*</span>占地面积
+                        </label>
+                        <div class="layui-input-block">
+                            <input type="text" name="commSize" id="commSize" autocomplete="off" placeholder="占地面积"
+                                   class="layui-input" lay-verify="required" value="">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">
+                            <span class='x-red'>*</span>开发商名称
+                        </label>
+                        <div class="layui-input-block">
+                            <input type="text" name="developersName" id="developersName" autocomplete="off" placeholder="开发商名称"
+                                   class="layui-input" lay-verify="required" value="">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">
+                            <span class='x-red'>*</span>物业公司名称
+                        </label>
+                        <div class="layui-input-block">
+                            <input type="text" name="proManagerName" id="proManagerName" autocomplete="off" placeholder="物业公司名称"
+                                   class="layui-input" lay-verify="required" value="">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">
+                            <span class='x-red'>*</span>绿化率
+                        </label>
+                        <div class="layui-input-block">
+                            <input type="text" name="greeGate" id="greeGate" autocomplete="off" placeholder="绿化率"
+                                   class="layui-input" lay-verify="required" value="">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">
+                            <span class='x-red'>*</span>总栋数
+                        </label>
+                        <div class="layui-input-block">
+                            <input type="text" name="totalNumberBuild" id="totalNumberBuild" autocomplete="off" placeholder="总栋数"
+                                   class="layui-input" lay-verify="required" value="">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">
+                            <span class='x-red'>*</span>总户数
+                        </label>
+                        <div class="layui-input-block">
+                            <input type="text" name="totalNumHouse" id="totalNumHouse" autocomplete="off" placeholder="总户数"
+                                   class="layui-input" lay-verify="required" value="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn"  lay-filter="addOrEdit" lay-submit>保存</button>
+
+            </div>
+        </div>
+    </form>
+</div>
+<script src="lib/layui/layui.js" charset="utf-8"></script>
+<script src="js/x-layui.js" charset="utf-8"></script>
+<script src="lib1/layui/layui.js" charset="UTF-8"></script>
+<script>
+    layui.use(['laydate','laydate','table','layer','upload','form'], function(){
+        var ok = layui.jquery;  //jquery
+        var laydate = layui.laydate;//日期插件
+        var table = layui.table;
+        var form = layui.form;
+        var layer = layui.layer;
+        okLoading.close(ok);
+
+        //监听提交
+        form.on('submit(addOrEdit)', function(data){
+            console.log("111111")
+            console.log(data)
+            var community_name=$("input[name='commName']").val();
+            var developers=$("input[name='developersName']").val();
+            var property=$("input[name='proManagerName']").val();
+            if(community_name==""){
+                layer.msg('小区名称不能为空',{icon:5,time:2000});return false;
+            }
+            if(developers==""){
+                layer.msg('小区开发商不能为空',{icon:5,time:2000});return false;
+            }
+            if(property==""){
+                layer.msg('物业公司不能为空',{icon:5,time:2000});return false;
+            }
+            var data=data.field;
+            console.log("222")
+            console.log(data)
+            $.ajax({
+                type:"put",
+                url:"comm",
+                data:JSON.stringify(data),
+                contentType:"application/json",
+                success:function(res) {
+                    if(res.code == 0)
+                    {
+                        layer.msg(res.info, {icon: 6,time:2000},function () {
+                            window.parent.location.reload();
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(index);
+                        });
+                        return false;
+
+                    }
+                    else{
+                        layer.msg(res.info,{icon:5,time:2000});return false;
+                    }
+                }
+
+
+
+            });
+
+        });
+
+    })
+</script>
+
+
+</body>
+</html>

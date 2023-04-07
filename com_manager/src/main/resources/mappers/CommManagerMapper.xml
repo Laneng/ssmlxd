@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lxd.dao.CommManagerMapper">
+  <resultMap id="BaseResultMap" type="com.lxd.bean.CommManager" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="comm_id" property="commId" jdbcType="VARCHAR" />
+    <result column="comm_name" property="commName" jdbcType="VARCHAR" />
+    <result column="comm_addres" property="commAddres" jdbcType="VARCHAR" />
+    <result column="comm_size" property="commSize" jdbcType="VARCHAR" />
+    <result column="total_num_house" property="totalNumHouse" jdbcType="VARCHAR" />
+    <result column="gree_gate" property="greeGate" jdbcType="INTEGER" />
+    <result column="img" property="img" jdbcType="VARCHAR" />
+    <result column="developers_name" property="developersName" jdbcType="VARCHAR" />
+    <result column="pro_manager_name" property="proManagerName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="property_code" property="propertyCode" jdbcType="VARCHAR" />
+    <result column="block_number_code" property="blockNumberCode" jdbcType="VARCHAR" />
+    <result column="people_card" property="peopleCard" jdbcType="VARCHAR" />
+    <result column="total_number_build" property="totalNumberBuild" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, comm_id, comm_name, comm_addres, comm_size, total_num_house, gree_gate, img, 
+    developers_name, pro_manager_name, create_time, type, property_code, block_number_code, 
+    people_card, total_number_build
+  </sql>
+
+
+  <select id="getAll" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/> from comm_manager
+  </select>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from comm_manager
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from comm_manager
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+
+  <delete id="deleteAll" parameterType="java.util.List">
+    delete from comm_manager where id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id}
+    </foreach>
+  </delete>
+
+<!--  <insert id="insert" parameterType="com.lxd.bean.CommManager" >-->
+<!--    insert into comm_manager (id, comm_id, comm_name, -->
+<!--      comm_addres, comm_size, total_num_house, -->
+<!--      gree_gate, img, developers_name, -->
+<!--      pro_manager_name, create_time, type, -->
+<!--      property_code, block_number_code, people_card, -->
+<!--      total_number_build)-->
+<!--    values (#{id,jdbcType=INTEGER}, #{commId,jdbcType=VARCHAR}, #{commName,jdbcType=VARCHAR}, -->
+<!--      #{commAddres,jdbcType=VARCHAR}, #{commSize,jdbcType=VARCHAR}, #{totalNumHouse,jdbcType=VARCHAR}, -->
+<!--      #{greeGate,jdbcType=INTEGER}, #{img,jdbcType=VARCHAR}, #{developersName,jdbcType=VARCHAR}, -->
+<!--      #{proManagerName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{type,jdbcType=INTEGER}, -->
+<!--      #{propertyCode,jdbcType=VARCHAR}, #{blockNumberCode,jdbcType=VARCHAR}, #{peopleCard,jdbcType=VARCHAR}, -->
+<!--      #{totalNumberBuild,jdbcType=VARCHAR})-->
+<!--  </insert>-->
+  <insert id="insertSelective" parameterType="com.lxd.bean.CommManager" >
+    insert into comm_manager
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="commId != null" >
+        comm_id,
+      </if>
+      <if test="commName != null" >
+        comm_name,
+      </if>
+      <if test="commAddres != null" >
+        comm_addres,
+      </if>
+      <if test="commSize != null" >
+        comm_size,
+      </if>
+      <if test="totalNumHouse != null" >
+        total_num_house,
+      </if>
+      <if test="greeGate != null" >
+        gree_gate,
+      </if>
+      <if test="img != null" >
+        img,
+      </if>
+      <if test="developersName != null" >
+        developers_name,
+      </if>
+      <if test="proManagerName != null" >
+        pro_manager_name,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="propertyCode != null" >
+        property_code,
+      </if>
+      <if test="blockNumberCode != null" >
+        block_number_code,
+      </if>
+      <if test="peopleCard != null" >
+        people_card,
+      </if>
+      <if test="totalNumberBuild != null" >
+        total_number_build,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="commId != null" >
+        #{commId,jdbcType=VARCHAR},
+      </if>
+      <if test="commName != null" >
+        #{commName,jdbcType=VARCHAR},
+      </if>
+      <if test="commAddres != null" >
+        #{commAddres,jdbcType=VARCHAR},
+      </if>
+      <if test="commSize != null" >
+        #{commSize,jdbcType=VARCHAR},
+      </if>
+      <if test="totalNumHouse != null" >
+        #{totalNumHouse,jdbcType=VARCHAR},
+      </if>
+      <if test="greeGate != null" >
+        #{greeGate,jdbcType=INTEGER},
+      </if>
+      <if test="img != null" >
+        #{img,jdbcType=VARCHAR},
+      </if>
+      <if test="developersName != null" >
+        #{developersName,jdbcType=VARCHAR},
+      </if>
+      <if test="proManagerName != null" >
+        #{proManagerName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="propertyCode != null" >
+        #{propertyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="blockNumberCode != null" >
+        #{blockNumberCode,jdbcType=VARCHAR},
+      </if>
+      <if test="peopleCard != null" >
+        #{peopleCard,jdbcType=VARCHAR},
+      </if>
+      <if test="totalNumberBuild != null" >
+        #{totalNumberBuild,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lxd.bean.CommManager" >
+    update comm_manager
+    <set >
+      <if test="commId != null" >
+        comm_id = #{commId,jdbcType=VARCHAR},
+      </if>
+      <if test="commName != null" >
+        comm_name = #{commName,jdbcType=VARCHAR},
+      </if>
+      <if test="commAddres != null" >
+        comm_addres = #{commAddres,jdbcType=VARCHAR},
+      </if>
+      <if test="commSize != null" >
+        comm_size = #{commSize,jdbcType=VARCHAR},
+      </if>
+      <if test="totalNumHouse != null" >
+        total_num_house = #{totalNumHouse,jdbcType=VARCHAR},
+      </if>
+      <if test="greeGate != null" >
+        gree_gate = #{greeGate,jdbcType=INTEGER},
+      </if>
+      <if test="img != null" >
+        img = #{img,jdbcType=VARCHAR},
+      </if>
+      <if test="developersName != null" >
+        developers_name = #{developersName,jdbcType=VARCHAR},
+      </if>
+      <if test="proManagerName != null" >
+        pro_manager_name = #{proManagerName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="propertyCode != null" >
+        property_code = #{propertyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="blockNumberCode != null" >
+        block_number_code = #{blockNumberCode,jdbcType=VARCHAR},
+      </if>
+      <if test="peopleCard != null" >
+        people_card = #{peopleCard,jdbcType=VARCHAR},
+      </if>
+      <if test="totalNumberBuild != null" >
+        total_number_build = #{totalNumberBuild,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+<!--  <update id="updateByPrimaryKey" parameterType="com.lxd.bean.CommManager" >-->
+<!--    update comm_manager-->
+<!--    set comm_id = #{commId,jdbcType=VARCHAR},-->
+<!--      comm_name = #{commName,jdbcType=VARCHAR},-->
+<!--      comm_addres = #{commAddres,jdbcType=VARCHAR},-->
+<!--      comm_size = #{commSize,jdbcType=VARCHAR},-->
+<!--      total_num_house = #{totalNumHouse,jdbcType=VARCHAR},-->
+<!--      gree_gate = #{greeGate,jdbcType=INTEGER},-->
+<!--      img = #{img,jdbcType=VARCHAR},-->
+<!--      developers_name = #{developersName,jdbcType=VARCHAR},-->
+<!--      pro_manager_name = #{proManagerName,jdbcType=VARCHAR},-->
+<!--      create_time = #{createTime,jdbcType=TIMESTAMP},-->
+<!--      type = #{type,jdbcType=INTEGER},-->
+<!--      property_code = #{propertyCode,jdbcType=VARCHAR},-->
+<!--      block_number_code = #{blockNumberCode,jdbcType=VARCHAR},-->
+<!--      people_card = #{peopleCard,jdbcType=VARCHAR},-->
+<!--      total_number_build = #{totalNumberBuild,jdbcType=VARCHAR}-->
+<!--    where id = #{id,jdbcType=INTEGER}-->
+<!--  </update>-->
+</mapper>
